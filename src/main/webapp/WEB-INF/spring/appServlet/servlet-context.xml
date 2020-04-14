@@ -22,7 +22,7 @@
 	</beans:bean>
 	
 	<context:component-scan base-package="com.sy.Spring_2" />
-	
+	<context:component-scan base-package="com.sy.member" />
 	
 	
 </beans:beans>
