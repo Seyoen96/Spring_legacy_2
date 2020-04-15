@@ -21,13 +21,25 @@ public class MemberController {
 	
 	@RequestMapping(value = "memberJoin", method = RequestMethod.GET)
 	public void memberJoin(Model model) {
-		model.addAttribute("id", "test");
+//		model.addAttribute("id", "test");
+		
 	}
 	
 	@RequestMapping(value = "memberJoin", method = RequestMethod.POST)
-	public void memberJoin2(HttpServletRequest request, MemberVO memberVO) {
+	public String memberJoin2(HttpServletRequest request, MemberVO memberVO) throws Exception {
 		
 		
+		if(memberVO!=null) {
+			//로그인 성공이면 index page로 이동, 
+			memberService.memberJoin(memberVO);
+			return "redirect:../";
+			
+		} else {
+			//실패하면 login 실패를 alert창에 띄우고 login form으로 이동
+			request.setAttribute("result", "Join fail!");
+			request.setAttribute("path", "./memberJoin");
+			return "common/result";
+		}
 		
 	}
 	
@@ -58,19 +70,34 @@ public class MemberController {
 	
 	
 	@RequestMapping(value = "memberPage", method = RequestMethod.GET)
-	public void memberPage() {
+	public void memberPage(HttpSession session, MemberVO memberVO) throws Exception {
 		
 	}
 	
-//	@RequestMapping(value = "memberDelete", method = RequestMethod.GET)
-//	public String memberDelete() {
-//		return "mem";
-//	}
-	
-	@RequestMapping(value = "memberUpdate", method = RequestMethod.GET)
-	public void memberUpdate() {
-	
+	@RequestMapping(value = "memberDelete", method = RequestMethod.GET)
+	public String memberDelete(HttpSession session) throws Exception {
+		MemberVO memberVO = (MemberVO) session.getAttribute("member");
+		memberService.memberDelete(memberVO);
+		session.invalidate();
+		return "redirect:../";
 	}
 	
+	@RequestMapping(value = "memberUpdate", method = RequestMethod.GET)
+	public void memberUpdate(HttpSession session) throws Exception {
+		
+	}
+	
+	@RequestMapping(value = "memberUpdate", method = RequestMethod.POST)
+	public String memberUpdate(HttpSession session, MemberVO memberVO) throws Exception {
+		memberService.memberUpdate(memberVO);
+		session.setAttribute("member", memberVO);
+		return "member/memberPage";
+	}
+	
+	@RequestMapping(value = "memberLogout", method = RequestMethod.GET)
+	public String memberLogout(HttpSession session) throws Exception {
+		session.invalidate();
+		return "redirect:../";
+	}
 
 }
